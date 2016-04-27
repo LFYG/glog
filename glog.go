@@ -680,7 +680,22 @@ func (l *loggingT) output(s severity, buf *buffer, file string, line int, alsoTo
 		os.Stderr.Write([]byte("ERROR: logging before flag.Parse: "))
 		os.Stderr.Write(data)
 	} else if l.toStderr {
+		colored := false
+		switch s {
+		case fatalLog:
+			setConsoleTextColorRed()
+			colored = true
+		case errorLog:
+			setConsoleTextColorRed()
+			colored = true
+		case warningLog:
+			setConsoleTextColorYellow()
+			colored = true
+		}
 		os.Stderr.Write(data)
+		if colored {
+			setConsoleTextColorReset()
+		}
 	} else {
 		if alsoToStderr || l.alsoToStderr || s >= l.stderrThreshold.get() {
 			os.Stderr.Write(data)
